@@ -13,12 +13,14 @@ const sendToken = (user, statusCode, res) => {
 
   const cookieExpireDays = parseInt(process.env.COOKIE_EXPIRE) || 7;
 
+  const isProduction = process.env.NODE_ENV === "production";
   res
     .status(statusCode)
     .cookie("token", token, {
       expires: new Date(Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     })
     .json({
       success: true,
