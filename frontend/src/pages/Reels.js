@@ -97,7 +97,10 @@ const UploadModal = ({ onClose, onUploaded }) => {
       toast.success("Reel uploaded!");
       onUploaded?.();
       onClose();
-    } catch (err) { toast.error(err.response?.data?.message || "Upload failed"); }
+    } catch (err) {
+      console.error("Reel upload error:", err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Upload failed");
+    }
     setLoading(false);
   };
 
@@ -291,8 +294,12 @@ const Reels = () => {
     setLoading(true);
     try {
       const res = await API.get("/reel");
+      console.log("Reels fetched:", res.data);
       setReels(res.data.reels || []);
-    } catch {}
+    } catch (err) {
+      console.error("Reels fetch error:", err.response?.data || err.message);
+      toast.error("Could not load reels: " + (err.response?.data?.message || err.message));
+    }
     setLoading(false);
   };
 
