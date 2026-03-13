@@ -47,11 +47,17 @@ app.use(cors({
     : cb(new Error("CORS blocked")),
   credentials: true,
 }));
-app.use(fileUpload({ 
-  useTempFiles: true, 
-  tempFileDir: "/tmp/",
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
-}));
+// express-fileupload — only for non-chat routes (multer handles chat uploads)
+app.use((req, res, next) => {
+  const url = req.originalUrl || req.url || "";
+  // Skip fileupload for chat message endpoints — multer handles those
+  if (url.includes("/chat/message")) return next();
+  fileUpload({ 
+    useTempFiles: true, 
+    tempFileDir: "/tmp/",
+    limits: { fileSize: 100 * 1024 * 1024 },
+  })(req, res, next);
+});
 
 // Routes
 app.use("/api/v1/user",         require("./routes/userRoutes"));
