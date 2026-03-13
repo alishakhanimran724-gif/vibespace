@@ -1,19 +1,13 @@
 const { Chat, Message } = require("../models/chatModel");
 const cloudinary = require("cloudinary").v2;
 
-/* ── helper: upload buffer to cloudinary (multer uses buffer) ── */
-const uploadBuffer = (buffer, folder, resource_type = "auto") =>
-  new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type },
-      (err, result) => (err ? reject(err) : resolve(result))
-    );
-    const { Readable } = require("stream");
-    const readable = new Readable();
-    readable.push(buffer);
-    readable.push(null);
-    readable.pipe(stream);
-  });
+/* ── helper: upload buffer to cloudinary via base64 ── */
+const uploadBuffer = (buffer, folder, resource_type = "auto") => {
+  const b64 = buffer.toString("base64");
+  const mimeType = resource_type === "video" ? "video/webm" : "image/jpeg";
+  const dataUri = `data:${mimeType};base64,${b64}`;
+  return cloudinary.uploader.upload(dataUri, { folder, resource_type });
+};
 
 /* ── GET /api/v1/chat  — all chats for current user ── */
 exports.getMyChats = async (req, res) => {
