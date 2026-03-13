@@ -48,6 +48,7 @@
   --font-body:   'Inter', sans-serif;
   --font-serif:  'Plus Jakarta Sans', sans-serif;
   --nav-h:       60px;
+  --hover:       #f0f3f7;
 }
 
 [data-theme="dark"] {
@@ -63,6 +64,7 @@
   --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
   --shadow:      0 4px 20px rgba(0,0,0,0.4);
   --shadow-lg:   0 12px 40px rgba(0,0,0,0.5);
+  --hover:       #1a2235;
 }
 
 /* ========== RESET ========== */
@@ -635,14 +637,7 @@ button { font-family: var(--font-body); }
 
 /* ========== CHAT ========== */
 /* ========== CHAT ========== */
-.chat-page {
-  margin-top: var(--nav-h);
-  height: calc(100vh - var(--nav-h));
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  overflow: hidden;               /* prevent any overflow */
-  border-top: 1px solid var(--border-soft);
-}
+/* chat-page defined below in full chat section */
 
 /* Mobile — show only one panel at a time */
 @media (max-width: 768px) {
@@ -650,9 +645,12 @@ button { font-family: var(--font-body); }
     grid-template-columns: 1fr;
     height: calc(100dvh - var(--nav-h) - 64px);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
   /* No active chat — show sidebar only */
   .chat-page:not(.has-active) .chat-main { display: none; }
+  .chat-page:not(.has-active) .chat-sidebar { display: flex !important; flex-direction: column; width: 100%; }
   /* Active chat — hide sidebar, show main full screen */
   .chat-page.has-active .chat-sidebar { display: none !important; }
   .chat-page.has-active .chat-main {
@@ -4805,7 +4803,8 @@ button { font-family: var(--font-body); }
    CHAT — FULL UPGRADE
    ======================================== */
 .chat-page {
-  display:flex; height:calc(100dvh - var(--nav-h));
+  display:flex;
+  height:calc(100dvh - var(--nav-h));
   overflow:hidden;
 }
 .chat-sidebar {
@@ -4817,7 +4816,9 @@ button { font-family: var(--font-body); }
 }
 .chat-sidebar.closed { width:0; overflow:hidden; }
 .chat-sidebar-header {
-  padding:16px; border-bottom:1px solid var(--border-soft);
+  padding:16px 16px 12px;
+  border-bottom:1px solid var(--border-soft);
+  flex-shrink:0;
 }
 .chat-sidebar-header h2 {
   font-size:18px; font-weight:700; margin:0 0 12px;
@@ -4825,8 +4826,8 @@ button { font-family: var(--font-body); }
 }
 .chat-search-wrap {
   display:flex; align-items:center; gap:8px;
-  background:var(--hover); border-radius:20px;
-  padding:8px 12px;
+  background:var(--surface-2); border-radius:12px;
+  padding:9px 12px; border:1.5px solid var(--border);
 }
 .chat-search-icon { color:var(--text-3); font-size:15px; flex-shrink:0; }
 .chat-search-input {
