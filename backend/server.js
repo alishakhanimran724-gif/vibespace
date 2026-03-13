@@ -6,9 +6,17 @@ const fileUpload = require("express-fileupload");
 const http = require("http");
 const { Server } = require("socket.io");
 const connectDB = require("./config/db");
+const cloudinary = require("cloudinary").v2;
 
 dotenv.config({ path: "./config/config.env" });
 connectDB();
+
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 const server = http.createServer(app);
