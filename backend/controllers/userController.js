@@ -24,6 +24,7 @@ const sendToken = (user, statusCode, res) => {
     })
     .json({
       success: true,
+      token,
       user: {
         _id:        user._id,
         name:       user.name,

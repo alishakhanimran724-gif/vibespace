@@ -3,37 +3,26 @@ const User = require("../models/userModel");
 
 exports.isAuthenticated = async (req, res, next) => {
   try {
-    // Try cookie first, then Authorization header
     let token = req.cookies?.token;
 
+    // Also accept Bearer token from Authorization header
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
     }
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Please login to access this resource",
-      });
+      return res.status(401).json({ success: false, message: "Please login first" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    req.user = await User.findById(decoded.id);
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User no longer exists",
-      });
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not found" });
     }
 
-    req.user = user;
     next();
   } catch (err) {
-    console.error("Auth middleware error:", err.message);
-    return res.status(401).json({
-      success: false,
-      message: "Invalid or expired token. Please login again.",
-    });
+    return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
 };

@@ -15,6 +15,7 @@ export const loadUser = createAsyncThunk("auth/loadUser", async (_, { rejectWith
 export const loginUser = createAsyncThunk("auth/login", async (formData, { rejectWithValue }) => {
   try {
     const res = await API.post("/user/login", formData);
+    if (res.data.token) localStorage.setItem("token", res.data.token);
     return res.data.user;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -25,6 +26,7 @@ export const loginUser = createAsyncThunk("auth/login", async (formData, { rejec
 export const registerUser = createAsyncThunk("auth/register", async (formData, { rejectWithValue }) => {
   try {
     const res = await API.post("/user/register", formData);
+    if (res.data.token) localStorage.setItem("token", res.data.token);
     return res.data.user;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || "Registration failed");
@@ -35,7 +37,9 @@ export const registerUser = createAsyncThunk("auth/register", async (formData, {
 export const logoutUser = createAsyncThunk("auth/logout", async (_, { rejectWithValue }) => {
   try {
     await API.get("/user/logout");
+    localStorage.removeItem("token");
   } catch (err) {
+    localStorage.removeItem("token");
     return rejectWithValue(err.response?.data?.message);
   }
 });
@@ -52,7 +56,6 @@ const authSlice = createSlice({
     clearError: (state) => { state.error = null; },
   },
   extraReducers: (builder) => {
-    // loadUser
     builder
       .addCase(loadUser.pending, (state) => { state.loading = true; })
       .addCase(loadUser.fulfilled, (state, action) => {
@@ -66,7 +69,6 @@ const authSlice = createSlice({
         state.user = null;
       });
 
-    // loginUser
     builder
       .addCase(loginUser.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -80,7 +82,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       });
 
-    // registerUser
     builder
       .addCase(registerUser.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(registerUser.fulfilled, (state, action) => {
@@ -94,7 +95,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       });
 
-    // logoutUser
     builder
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
