@@ -163,12 +163,24 @@ const ReelCard = ({ reel: initialReel, isActive, currentUser }) => {
   const videoRef = useRef();
 
   useEffect(() => {
-    if (!videoRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
+
     if (isActive) {
-      videoRef.current.play().then(() => setPlaying(true)).catch(() => {});
+      // Small delay to avoid play/pause race condition on scroll
+      const timer = setTimeout(() => {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => setPlaying(true)).catch(() => {
+            // Autoplay blocked — stay paused, user can tap to play
+            setPlaying(false);
+          });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     } else {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
+      video.pause();
+      video.currentTime = 0;
       setPlaying(false);
     }
   }, [isActive]);
