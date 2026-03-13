@@ -1,15 +1,18 @@
 const { Chat, Message } = require("../models/chatModel");
 const cloudinary = require("cloudinary").v2;
-const streamifier = require("streamifier");
 
-/* ── helper: upload buffer to cloudinary ── */
+/* ── helper: upload buffer to cloudinary (multer uses buffer) ── */
 const uploadBuffer = (buffer, folder, resource_type = "auto") =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       { folder, resource_type },
       (err, result) => (err ? reject(err) : resolve(result))
     );
-    streamifier.createReadStream(buffer).pipe(stream);
+    const { Readable } = require("stream");
+    const readable = new Readable();
+    readable.push(buffer);
+    readable.push(null);
+    readable.pipe(stream);
   });
 
 /* ── GET /api/v1/chat  — all chats for current user ── */

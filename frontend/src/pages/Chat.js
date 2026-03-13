@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 let socket;
 const REACTIONS = ["❤️","😂","😮","😢","👍","🔥"];
-const GIPHY_KEY  = ""; // add your giphy key here if needed
+const GIPHY_KEY  = process.env.REACT_APP_GIPHY_KEY || "";
 
 const formatTime = dateStr => {
   if (!dateStr) return "";
@@ -35,11 +35,30 @@ const GifPicker = ({ onSelect, onClose }) => {
     setLoading(true);
     try {
       const endpoint = GIPHY_KEY
-        ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(q)}&limit=12`
-        : `https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC&limit=12`;
+        ? (q
+            ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(q)}&limit=12`
+            : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=12`)
+        : (q
+            ? `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(q)}&key=AIzaSyAyimkuYQYF_y3oJb3kuniCGFHnMfGEAnE&limit=12&media_filter=gif`
+            : `https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_y3oJb3kuniCGFHnMfGEAnE&limit=12&media_filter=gif`);
       const res = await fetch(endpoint);
       const data = await res.json();
-      setGifs(data.data || []);
+      // Handle both Giphy format (data.data) and Tenor format (data.results)
+      if (data.data) {
+        setGifs(data.data.map(g => ({
+          id: g.id,
+          title: g.title,
+          preview: g.images?.fixed_height_small?.url,
+          original: g.images?.original?.url,
+        })));
+      } else if (data.results) {
+        setGifs(data.results.map(g => ({
+          id: g.id,
+          title: g.content_description,
+          preview: g.media_formats?.gif?.url || g.media_formats?.tinygif?.url,
+          original: g.media_formats?.gif?.url,
+        })));
+      }
     } catch { toast.error("GIF load failed"); }
     setLoading(false);
   };
@@ -65,10 +84,10 @@ const GifPicker = ({ onSelect, onClose }) => {
           : gifs.map(g => (
             <img
               key={g.id}
-              src={g.images?.fixed_height_small?.url}
+              src={g.preview}
               alt={g.title}
               className="gif-item"
-              onClick={() => onSelect(g.images?.original?.url, g.images?.fixed_height_small?.url)}
+              onClick={() => onSelect(g.original, g.preview)}
             />
           ))
         }
