@@ -68,10 +68,11 @@ exports.getChatMessages = async (req, res) => {
   }
 };
 
-/* ── POST /api/v1/chat/message  — send text / gif ── */
+/* ── POST /api/v1/chat/message/:chatId  — send text / gif ── */
 exports.sendMessage = async (req, res) => {
   try {
-    const { chatId, content, gif, replyTo } = req.body;
+    const chatId = req.params.chatId || req.body.chatId;
+    const { content, gif, replyTo } = req.body;
     const chat = await Chat.findById(chatId);
     if (!chat) return res.status(404).json({ success: false, message: "Chat not found" });
 
@@ -104,12 +105,22 @@ exports.sendImageMessage = async (req, res) => {
     const { chatId } = req.params;
     const { content, replyTo } = req.body;
 
+    console.log("sendImageMessage called, chatId:", chatId);
+    console.log("req.file exists:", !!req.file);
+    console.log("Cloudinary config:", {
+      cloud_name: process.env.CLOUDINARY_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY ? "SET" : "MISSING",
+      api_secret: process.env.CLOUDINARY_API_SECRET ? "SET" : "MISSING",
+    });
+
     const chat = await Chat.findById(chatId);
     if (!chat) return res.status(404).json({ success: false, message: "Chat not found" });
 
     let imageData = {};
     if (req.file) {
+      console.log("Uploading to cloudinary, buffer size:", req.file.buffer?.length);
       const result = await uploadBuffer(req.file.buffer, "vibespace/chat");
+      console.log("Cloudinary result:", result?.secure_url);
       imageData = { url: result.secure_url, public_id: result.public_id };
     }
 
@@ -128,6 +139,7 @@ exports.sendImageMessage = async (req, res) => {
     const populated = await msg.populate("sender", "username avatar");
     res.json({ success: true, message: populated });
   } catch (err) {
+    console.error("sendImageMessage ERROR:", err.message, err.stack);
     res.status(500).json({ success: false, message: err.message });
   }
 };

@@ -318,7 +318,7 @@ const Chat = () => {
     fd.append("chatId", activeChat._id);
     if (replyTo) fd.append("replyTo", replyTo._id);
 
-    let endpoint = "/chat/message";
+    let endpoint = `/chat/message/${activeChat._id}`;
     if (imgFile) {
       fd.append("image", imgFile);
       fd.append("content", message || "Photo");
@@ -358,8 +358,8 @@ const Chat = () => {
     if (!activeChat?._id) return;
     setShowGif(false);
     try {
-      const res = await API.post("/chat/message", {
-        chatId: activeChat._id, content: "", gif: gifUrl
+      const res = await API.post(`/chat/message/${activeChat._id}`, {
+        content: "", gif: gifUrl
       });
       const newMsg = { ...res.data.message, gif: gifUrl };
       socket.emit("new-message", { ...newMsg, chatId: activeChat._id });

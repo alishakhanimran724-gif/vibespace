@@ -301,7 +301,10 @@ const CreatePost = ({ currentUser, onPosted }) => {
     const fd = new FormData();
     fd.append("caption", caption);
     if (image) fd.append("image", image);
-    if (forSale && price) fd.append("price", price);
+    if (forSale && price) {
+      fd.append("isForSale", "true");
+      fd.append("price", price);
+    }
     try {
       await API.post("/post/new", fd);
       toast.success("Posted!");

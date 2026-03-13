@@ -488,9 +488,12 @@ button { font-family: var(--font-body); }
 .post-add-comment input { flex:1; border:none; background:none; font-size:13px; font-family:var(--font-body); outline:none; color:var(--text); }
 .post-add-comment button { background:none; border:none; color:var(--accent); font-weight:500; font-size:13px; cursor:pointer; }
 .post-sale-badge {
-  background:var(--text); color:var(--bg);
-  font-size:11px; font-weight:500; padding:3px 10px;
+  background: var(--gradient);
+  color: #fff;
+  font-size:11px; font-weight:700; padding:3px 10px;
   border-radius:20px; margin-left:auto; letter-spacing:0.3px;
+  display: flex; align-items: center; gap: 4px;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.3);
 }
 
 /* ========== SIDEBAR ========== */
