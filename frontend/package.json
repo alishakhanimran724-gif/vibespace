@@ -19,8 +19,8 @@
     "timeago.js": "^4.0.2"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
+    "start": "node init && craco start",
+    "build": "node init && craco build",
     "test": "craco test"
   },
   "proxy": "http://localhost:4000",

@@ -381,8 +381,8 @@ const Chat = () => {
   /* ── No chat selected ── */
   if (!activeChat) return (
     <div className="chat-page">
-      {/* Sidebar */}
-      <div className="chat-sidebar">
+      {/* Sidebar — full width on mobile when no chat selected */}
+      <div className="chat-sidebar" style={{ width:"100%" }}>
         <div className="chat-sidebar-header">
           <h2>Messages</h2>
           <div className="chat-search-wrap">
