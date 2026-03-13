@@ -47,11 +47,9 @@ const ProductModal = ({ post, onClose, currentUser }) => {
             </span>
           ))}
         </div>
-        {!isOwner && (
-          <button className="btn-primary" style={{ width:"100%" }} onClick={() => setCheckoutOpen(true)}>
-            <AiOutlineShoppingCart style={{ marginRight:6 }} /> Buy Now — ${post.price}
-          </button>
-        )}
+        <button className="btn-primary" style={{ width:"100%" }} onClick={() => setCheckoutOpen(true)}>
+          <AiOutlineShoppingCart style={{ marginRight:6 }} /> Buy Now — ${post.price}
+        </button>
         {checkoutOpen && <CheckoutModal post={post} onClose={() => setCheckoutOpen(false)} onSuccess={() => { setCheckoutOpen(false); onClose(); }} />}
       </div>
     </div>
