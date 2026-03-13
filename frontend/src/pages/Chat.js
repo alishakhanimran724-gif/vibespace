@@ -147,9 +147,11 @@ const useVoiceRecorder = () => {
 /* ── Single Message Bubble ── */
 const MessageBubble = ({ msg, isOwn, onReact, onReply, currentUser }) => {
   const [showReactions, setShowReactions] = useState(false);
-  const isGif   = msg.gif || msg.image?.includes("giphy");
-  const isAudio = msg.audio;
-  const isImage = msg.image && !isGif;
+  const imageUrl = msg.image?.url || (typeof msg.image === "string" ? msg.image : null);
+  const audioUrl = msg.audio?.url || (typeof msg.audio === "string" ? msg.audio : null);
+  const isGif    = msg.gif || imageUrl?.includes("giphy");
+  const isAudio  = !!audioUrl;
+  const isImage  = !!imageUrl && !isGif;
 
   return (
     <div className={`msg-row ${isOwn ? "own" : "other"}`}>
@@ -173,10 +175,10 @@ const MessageBubble = ({ msg, isOwn, onReact, onReply, currentUser }) => {
           onDoubleClick={() => onReact?.(msg._id, "❤️")}
           onContextMenu={e => { e.preventDefault(); setShowReactions(r => !r); }}
         >
-          {isImage && <img src={msg.image} alt="img" className="msg-image" onClick={() => window.open(msg.image)} />}
-          {isGif   && <img src={msg.gif || msg.image} alt="gif" className="msg-gif" />}
+          {isImage && <img src={imageUrl} alt="img" className="msg-image" onClick={() => window.open(imageUrl)} />}
+          {isGif   && <img src={msg.gif || imageUrl} alt="gif" className="msg-gif" />}
           {isAudio && (
-            <audio controls src={msg.audio} className="msg-audio" style={{ maxWidth:220 }} />
+            <audio controls src={audioUrl} className="msg-audio" style={{ maxWidth:220 }} />
           )}
           {msg.content && !isGif && (
             <span className="msg-text">{msg.content}</span>
@@ -339,7 +341,7 @@ const Chat = () => {
       setMessages(prev => [...prev, newMsg]);
       setMessage(""); setImgFile(null); setImgPreview(null);
       setReplyTo(null); voice.cancel();
-    } catch { toast.error("Send failed"); }
+    } catch (err) { console.error("Send error:", err.response?.data || err.message); toast.error(err.response?.data?.message || "Send failed"); }
   };
 
   /* ── React to message ── */
