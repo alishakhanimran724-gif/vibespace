@@ -16,11 +16,18 @@ exports.createReel = async (req, res) => {
     const result = await cloudinary.uploader.upload(videoFile.tempFilePath, {
       resource_type: "video",
       folder: "vibespace/reels",
+      chunk_size: 6000000, // 6MB chunks for large videos
+      eager: [{ format: "mp4", quality: "auto" }],
+      eager_async: true,
     });
+    
+    // Use secure_url from result
+    const videoUrl = result.secure_url || result.url;
+    if (!videoUrl) throw new Error("Cloudinary upload failed — no URL returned");
 
     const reel = await Reel.create({
       owner: req.user._id,
-      video: { public_id: result.public_id, url: result.secure_url },
+      video: { public_id: result.public_id, url: videoUrl },
       caption,
       audio,
     });

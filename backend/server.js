@@ -39,7 +39,11 @@ app.use(cors({
     : cb(new Error("CORS blocked")),
   credentials: true,
 }));
-app.use(fileUpload({ useTempFiles: true }));
+app.use(fileUpload({ 
+  useTempFiles: true, 
+  tempFileDir: "/tmp/",
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
+}));
 
 // Routes
 app.use("/api/v1/user",         require("./routes/userRoutes"));
