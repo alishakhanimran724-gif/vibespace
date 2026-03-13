@@ -24,9 +24,17 @@ const io = new Server(server, {
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", process.env.FRONTEND_URL].filter(Boolean);
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://vibespace-mu.vercel.app",
+  "https://vibespace.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 app.use(cors({
-  origin: (origin, cb) => (!origin || allowedOrigins.includes(origin)) ? cb(null, true) : cb(new Error("CORS blocked")),
+  origin: (origin, cb) => (!origin || allowedOrigins.some(o => origin === o || origin.endsWith(".vercel.app")))
+    ? cb(null, true)
+    : cb(new Error("CORS blocked")),
   credentials: true,
 }));
 app.use(fileUpload({ useTempFiles: true }));
