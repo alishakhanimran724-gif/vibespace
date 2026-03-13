@@ -1,5 +1,5 @@
 import { AiOutlineAppstore, AiOutlineArrowLeft, AiOutlineCamera, AiOutlineClose, AiOutlineHeart, AiOutlineLink, AiOutlineMessage, AiOutlineTag } from "react-icons/ai";
-import { BsBookmark } from "react-icons/bs";
+import { BsBookmark, BsHandbag } from "react-icons/bs";
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";

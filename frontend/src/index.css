@@ -191,13 +191,13 @@ button { font-family: var(--font-body); }
   display:inline-flex; align-items:center; gap:6px;
 }
 .btn-ghost:hover { background:var(--surface-2); border-color:var(--text-3); color:var(--text); }
-.btn-cancel {
+.btn-cancel, .btn-secondary {
   background:none; border:1px solid var(--border);
   border-radius:var(--radius-sm); padding:8px 18px;
   font-family:var(--font-body); font-size:13px;
   cursor:pointer; color:var(--text-2); transition:background 0.15s;
 }
-.btn-cancel:hover { background:var(--surface-2); }
+.btn-cancel:hover, .btn-secondary:hover { background:var(--surface-2); }
 .btn-follow {
   background:none; border:none;
   color:var(--accent); font-size:12px; font-weight:600;
@@ -5038,4 +5038,105 @@ button { font-family: var(--font-body); }
   .chat-sidebar { position:absolute; z-index:100; height:100%; width:100%; left:0; }
   .chat-sidebar.closed { width:0; }
   .chat-back-btn { display:flex; }
+}
+
+/* ========== SELLER DASHBOARD TABS ========== */
+.seller-page {
+  max-width: 900px;
+  margin: calc(var(--nav-h) + 20px) auto 80px;
+  padding: 0 16px;
+  animation: pageIn 0.3s ease;
+}
+.seller-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+}
+.seller-tabs {
+  display: flex; gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.seller-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px;
+  border: none; background: none;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; color: var(--text-3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  position: relative;
+}
+.seller-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--text);
+  font-weight: 700;
+}
+.seller-tab:hover:not(.active) { color: var(--text-2); }
+.seller-tab-badge {
+  background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 700;
+  min-width: 18px; height: 18px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+}
+.seller-search-wrap {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 14px; margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+.seller-search-wrap:focus-within { border-color: var(--text-3); }
+.seller-search-input {
+  flex: 1; border: none; outline: none; background: transparent;
+  padding: 11px 0; font-size: 14px;
+  color: var(--text); font-family: var(--font-body);
+}
+.seller-content { }
+.seller-stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.seller-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px; text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.seller-stat-icon { font-size: 22px; margin-bottom: 6px; }
+.seller-stat-val { font-size: 24px; font-weight: 800; }
+.seller-stat-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+.seller-empty {
+  text-align: center; padding: 60px 20px; color: var(--text-3);
+}
+.seller-empty h3 { font-size: 18px; font-weight: 700; margin: 12px 0 6px; }
+.product-card-skeleton {
+  border-radius: var(--radius-lg); aspect-ratio: 0.8;
+  background: linear-gradient(90deg, var(--border) 25%, var(--surface-2) 50%, var(--border) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.5s infinite;
+}
+.product-price-tag {
+  position: absolute; bottom: 10px; left: 10px;
+  background: rgba(0,0,0,0.75); color: #fff;
+  font-size: 13px; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px;
+  display: flex; align-items: center; gap: 4px;
+}
+.product-hover-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+.product-quick-buy {
+  background: #fff; color: #000;
+  border: none; border-radius: 20px;
+  padding: 8px 20px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: var(--font-body);
 }
