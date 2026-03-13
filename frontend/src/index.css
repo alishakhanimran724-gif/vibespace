@@ -646,15 +646,36 @@ button { font-family: var(--font-body); }
 
 /* Mobile — show only one panel at a time */
 @media (max-width: 768px) {
-  .chat-page { grid-template-columns: 1fr; }
-  /* No active chat — show sidebar, hide main */
+  .chat-page {
+    grid-template-columns: 1fr;
+    height: calc(100dvh - var(--nav-h) - 64px);
+    position: relative;
+  }
+  /* No active chat — show sidebar only */
   .chat-page:not(.has-active) .chat-main { display: none; }
-  /* Active chat — hide sidebar, show main */
+  /* Active chat — hide sidebar, show main full screen */
   .chat-page.has-active .chat-sidebar { display: none !important; }
-  .chat-page.has-active .chat-main { display: flex; flex-direction: column; }
-  /* Full height on mobile */
-  .chat-page { height: calc(100dvh - var(--nav-h) - 64px); }
-  .chat-main { height: 100%; }
+  .chat-page.has-active .chat-main {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  .chat-page.has-active .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .chat-page.has-active .chat-input-bar {
+    flex-shrink: 0;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  /* Send button gradient on mobile */
+  .chat-send-btn {
+    background: var(--gradient) !important;
+    color: #fff !important;
+  }
 }
 
 /* ── Left: Chat List ── */
