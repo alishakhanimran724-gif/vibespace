@@ -62,6 +62,8 @@ const ProductModal = ({ post, onClose, currentUser }) => {
 const ProductCard = ({ post, onWishlist, isWishlisted, currentUser }) => {
   const [hovered, setHovered] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const isOwner = post.owner?._id?.toString() === currentUser?._id?.toString();
   return (
     <>
       <div
@@ -106,9 +108,19 @@ const ProductCard = ({ post, onWishlist, isWishlisted, currentUser }) => {
             <Stars rating={post.avgRating || 4} />
             <span style={{ fontSize:11, color:"var(--text-3)" }}>({post.reviewCount || 0})</span>
           </div>
+          {!isOwner && (
+            <button
+              className="product-buy-btn"
+              style={{ marginTop:10 }}
+              onClick={e => { e.stopPropagation(); setCheckoutOpen(true); }}
+            >
+              <AiOutlineShoppingCart /> Buy Now — ${post.price}
+            </button>
+          )}
         </div>
       </div>
       {modalOpen && <ProductModal post={post} onClose={() => setModalOpen(false)} currentUser={currentUser} />}
+      {checkoutOpen && <CheckoutModal post={post} onClose={() => setCheckoutOpen(false)} onSuccess={() => setCheckoutOpen(false)} />}
     </>
   );
 };
