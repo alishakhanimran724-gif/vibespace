@@ -242,7 +242,7 @@ const Chat = () => {
 
   /* ── Socket setup ── */
   useEffect(() => {
-    socket = io("http://localhost:4000", { withCredentials: true });
+    socket = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:4000", { withCredentials: true, transports: ["websocket", "polling"] });
     socket.emit("setup", user);
     socket.on("connected", () => {});
     socket.on("online-users", users => setOnlineUsers(users));
