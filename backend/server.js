@@ -65,25 +65,52 @@ app.use("/api/v1/analytics",    require("./routes/analyticsRoutes"));
 app.use("/api/v1/ai",           require("./routes/aiRoutes"));
 
 // Socket.io
-let onlineUsers = {};
+let onlineUsers = {}; // userId -> socketId
+
 io.on("connection", (socket) => {
-  socket.on("join", (userId) => {
-    onlineUsers[userId] = socket.id;
-    io.emit("onlineUsers", Object.keys(onlineUsers));
+
+  // User identifies themselves
+  socket.on("setup", (user) => {
+    if (user?._id) {
+      onlineUsers[user._id] = socket.id;
+      socket.join(user._id); // personal room
+      socket.emit("connected");
+      io.emit("online-users", Object.keys(onlineUsers));
+    }
   });
-  socket.on("sendMessage", ({ senderId, receiverId, message }) => {
-    const receiverSocket = onlineUsers[receiverId];
-    if (receiverSocket) io.to(receiverSocket).emit("receiveMessage", { senderId, message });
+
+  // Join a chat room
+  socket.on("join-chat", (chatId) => {
+    socket.join(chatId);
   });
-  socket.on("typing", ({ senderId, receiverId }) => {
-    const receiverSocket = onlineUsers[receiverId];
-    if (receiverSocket) io.to(receiverSocket).emit("typing", senderId);
+
+  // New message — broadcast to chat room
+  socket.on("new-message", (msg) => {
+    const chatId = msg.chatId || msg.chat;
+    if (chatId) {
+      socket.to(chatId).emit("message-received", msg);
+    }
   });
+
+  // Typing indicators
+  socket.on("typing", (chatId) => {
+    socket.to(chatId).emit("typing");
+  });
+  socket.on("stop-typing", (chatId) => {
+    socket.to(chatId).emit("stop-typing");
+  });
+
+  // Message reactions
+  socket.on("react-message", ({ messageId, reactions, chatId }) => {
+    socket.to(chatId).emit("message-reacted", { messageId, reactions });
+  });
+
+  // Disconnect
   socket.on("disconnect", () => {
     Object.keys(onlineUsers).forEach((key) => {
       if (onlineUsers[key] === socket.id) delete onlineUsers[key];
     });
-    io.emit("onlineUsers", Object.keys(onlineUsers));
+    io.emit("online-users", Object.keys(onlineUsers));
   });
 });
 
