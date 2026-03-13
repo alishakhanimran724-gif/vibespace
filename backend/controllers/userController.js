@@ -56,8 +56,7 @@ exports.register = async (req, res) => {
     if (exists)
       return res.status(400).json({ success: false, message: "Email or username already taken" });
 
-    // Hash password ONCE here
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Password hashing handled by userModel pre-save hook
 
     let avatar = { public_id: "", url: "" };
     if (req.files && req.files.avatar) {
@@ -73,7 +72,7 @@ exports.register = async (req, res) => {
       name,
       username: username.toLowerCase(),
       email: email.toLowerCase(),
-      password: hashedPassword,
+      password: password,
       avatar,
     });
 
